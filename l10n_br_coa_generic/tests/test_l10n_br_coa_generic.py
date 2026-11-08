@@ -26,3 +26,13 @@ class L10nBrCoaGeneric(TransactionCase):
 
         # Verify anglo saxon accounting is enabled
         self.assertTrue(self.l10n_br_company.anglo_saxon_accounting)
+
+    def test_guess_brazilian_chart(self):
+        """A Brazilian company is never proposed the br_oca parent, which has
+        no income/expense accounts, once a complete chart is installed."""
+        chart_template = self.env["account.chart.template"]
+        guess = chart_template._guess_chart_template(self.env.ref("base.br"))
+        self.assertNotEqual(guess, "br_oca")
+        self.assertEqual(
+            chart_template._get_chart_template_mapping()[guess]["parent"], "br_oca"
+        )
